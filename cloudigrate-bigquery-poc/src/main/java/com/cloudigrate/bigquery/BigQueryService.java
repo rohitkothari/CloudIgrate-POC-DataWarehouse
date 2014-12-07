@@ -26,16 +26,27 @@ import com.google.api.services.bigquery.model.TableList;
 import com.google.api.services.bigquery.model.TableReference;
 import com.google.api.services.bigquery.model.TableSchema;
 
+/*	Main purpose: To try and explore Google BigQuery Java Client API Library
+	Pre-requisite: Make sure you have manually created a Google Cloud project at Cloud Console
+
+*/
 public class BigQueryService {
 
-	 private static TableReference tableRef;
-	 private static TableSchema tableSchema;
+	private static TableReference tableRef;
+	private static TableSchema tableSchema;
 	  
 	public static void main(String[] args) throws GeneralSecurityException, IOException {
 		// TODO Auto-generated method stub
+		
+		
+		/*	Purpose of snippet: Authenticate to Google BigQuery service
+			Required parameters:
+				1. serviceAccountId: Please find this in your created project at Google Cloud console
+				2. serviceAccountPrivateKeyFromP12File: Path to your downloaded a .p12 file
+				3. serviceAccountScopes: Provide a scope for this project, i.e. BIGQUERY
+		*/
 		final HttpTransport TRANSPORT = new NetHttpTransport();
 		JsonFactory JSONFACTORY = new JacksonFactory();
-		
 		GoogleCredential credential = new GoogleCredential.Builder()
 				.setTransport(TRANSPORT)
 				.setJsonFactory(JSONFACTORY)
@@ -44,64 +55,51 @@ public class BigQueryService {
 				.setServiceAccountScopes(Collections.singleton(BigqueryScopes.BIGQUERY))
 				.build();
 		
-//		Bigquery bigquery = null;
-//		GoogleClientRequestInitializer initializer = new CommonGoogleJsonClientRequestInitializer() {
-//	        public void initialize(AbstractGoogleJsonClientRequest request) {
-//	          BigqueryRequest bigqueryRequest = (BigqueryRequest) request;
-//	          bigqueryRequest.setPrettyPrint(true);
-//	        }
-//	      };
-//	    
-//	    bigquery = new Bigquery.Builder(
-//	    		TRANSPORT, JSONFACTORY, credential).setHttpRequestInitializer(credential)
-//	              .setGoogleClientRequestInitializer(initializer)
-//	              .setApplicationName("CIBQ")
-//	              .build();
-//		
-	    
+		
+		/*	Purpose of snippet: Create an instance of Bigquery client to connect to your project
+			Required parameters:
+				1. TRANSPORT
+				2. JSONFACTORY
+				3. credential
+				
+		*/	    
 		Bigquery bigQuery = new Bigquery(TRANSPORT, JSONFACTORY, credential);
-//		Bigquery biqQueryBuilder = new Bigquery.Builder(TRANSPORT, JSONFACTORY, credential)
-//										.setApplicationName("CIBQ")
-//										.build();
-		//System.out.println("Executed:"+bigQuery.getApplicationName());
-		
-		//PRINTING BIGQUERY PROJECTS
+
+
+		/*	Purpose of snippet: To list all bigquery projects in an account
+			Note: Bigquery APIs have defined their own 'List' for 'Projects', 'Datasets', etc.
+			      Please observe the following snippet carefully. It represents a sample set of steps
+			      on how to go about 'Lists'
+		*/
 		Projects.List projectListRequest = bigQuery.projects().list();
-	    ProjectList projectList = projectListRequest.execute();
-	    List<ProjectList.Projects> projects = projectList.getProjects();
-	    System.out.println("Available projects\n----------------\n");
-	    String projectId = "";
-	    //int count = 0;
-	    for (ProjectList.Projects project : projects) {
-	    	projectId = project.getProjectReference().getProjectId();
-	    	System.out.format("Project ID: %s\n", projectId);
-	    	//count++;
-	    }
+		ProjectList projectList = projectListRequest.execute();
+	    	List<ProjectList.Projects> projects = projectList.getProjects();
+	    	System.out.println("Available projects\n----------------\n");
+	    	String projectId = "";
+	    		//int count = 0;
+	    	for (ProjectList.Projects project : projects) {
+	    		projectId = project.getProjectReference().getProjectId();
+	    		System.out.format("Project ID: %s\n", projectId);
+	    		//count++;
+	    	}
 		
-	    //PRINTING DATASETS IN PARTICULAR BIGQUERY PROJECT
-	    Datasets.List datasetListRequest = bigQuery.datasets().list(projectId);
-	    DatasetList datasetList = datasetListRequest.execute();
-	    List<DatasetList.Datasets> datasets= datasetList.getDatasets();
-	    String datasetId=null;
-	    //count = 0;
-	    for (DatasetList.Datasets dataset : datasets) {
-	    	datasetId = dataset.getDatasetReference().getDatasetId();
-	    	System.out.format("Dataset ID: %s\n", dataset.getDatasetReference().getDatasetId());
-	    }
+		
+	    	/*	Purpose of snippet: To list all datasets in a BigQuery instance
+			Note: Bigquery APIs have defined their own 'List' for 'Projects', 'Datasets', etc.
+			      Please observe the following snippet carefully. It represents a sample set of steps
+			      on how to go about 'Lists'
+		*/
+	    	Datasets.List datasetListRequest = bigQuery.datasets().list(projectId);
+	    	DatasetList datasetList = datasetListRequest.execute();
+	    	List<DatasetList.Datasets> datasets= datasetList.getDatasets();
+	    	String datasetId=null;
+	    	//count = 0;
 	    
-//	    Tables.List listTablesReply = bigQuery.tables().list(projectId, datasetId);
-//	    TableList tableList = listTablesReply.execute();
-//	    if (tableList.getTables() != null) {
-//
-//	        List tables = tableList.getTables();
-//
-//	        System.out.println("Tables list:");
-//
-//	        for (TableList.Tables table : tables) {
-//	          System.out.format("%s\n", table.getId());
-//	        }
-//
-//	      }
+	    	for (DatasetList.Datasets dataset : datasets) {
+	    		datasetId = dataset.getDatasetReference().getDatasetId();
+	    		System.out.format("Dataset ID: %s\n", dataset.getDatasetReference().getDatasetId());
+	    	}
+	    
 	}
 
 }
