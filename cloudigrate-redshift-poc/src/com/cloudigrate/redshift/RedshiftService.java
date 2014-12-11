@@ -18,6 +18,19 @@ import com.amazonaws.services.redshift.model.CreateClusterRequest;
 import com.amazonaws.services.redshift.model.DescribeClustersRequest;
 import com.amazonaws.services.redshift.model.DescribeClustersResult;
 
+/*	Main purpose: To try and explore Amazon Web Services Redshift Java Client API Library
+	Pre-requisite: You will need the following in order to use this application:
+		1. AWS Access Key ID
+		2. AWS Secret Access Key
+	Features:
+		1. Create a new AWS Redshift cluster
+		2. Describe information about existing cluster
+		3. Test and execute database queries to a cluster
+		
+	Note: Please execute this program in the sequence it asks you to.
+*/
+
+
 public class RedshiftService {
 
 	BasicAWSCredentials creds;
@@ -30,8 +43,6 @@ public class RedshiftService {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		// TODO Auto-generated method stub
 		
-		
-	    
 		RedshiftService redshift = new RedshiftService();
 		
 		//Code for displaying menu - referred Vaibhav's POC
@@ -69,17 +80,30 @@ public class RedshiftService {
 			System.out.println("Do you want to continue? (y/n)");
 			userInputString= bufRead.readLine();
 		}while(userInputString.equals("y"));
-		
-
 	}
 	
+	
+	/*	Purpose of snippet: Authenticate to AWS Redshift
+		Required parameters:
+			1. AWS Access Key ID
+			2. AWS Secret Acces Key
+	*/
 	public void authenticateRedshift() {
+		//creds = new BasicAWSCredentials("accessKeyIdHere", "secretAccessKeyHere");
 		creds = new BasicAWSCredentials("", "");
-		
 		client = new AmazonRedshiftClient(creds);
+		//Setting the region in which Redshift cluster will be created
 		client.setEndpoint("https://redshift.us-east-1.amazonaws.com/");
 	}
 	
+	
+	/*	Purpose of snippet: Create a new AWS Redshift cluster
+		Steps:
+			1. Initialize a new request for creating a cluster
+			2. Set this request with required minimum parameters
+			3. Execute this request through AmazonRedshiftClient and record its response
+		Note: These steps are also applicable to many other AWS services such as AWS RDS, etc.
+	*/
 	public void createRedshift() {
 		CreateClusterRequest request = new CreateClusterRequest();
 		request.withClusterIdentifier("ciusingsdk")
@@ -92,6 +116,14 @@ public class RedshiftService {
 		System.out.println("Created cluster " + createResponse.getClusterIdentifier());
 	}
 	
+	
+	/*	Purpose of snippet: Describe information about existing Redshift cluster
+		Steps:
+			1. Initialize a new describe request for clusters
+			2. Set this request with required minimum parameters
+			3. Execute this request through AmazonRedshiftClient and record its response
+		Note: These steps are also applicable to many other AWS services such as AWS RDS, etc.
+	*/
 	public void describeRedshiftClusters() {
 		DescribeClustersRequest describeClusterRequest = new DescribeClustersRequest();
 		
@@ -126,6 +158,11 @@ public class RedshiftService {
 
 	}
 	
+	
+	/*	Purpose of snippet: Connect to AWS Redshift cluster
+		Note: This is similar to a client program that connects to a database using appropriate driver,
+			and then you can execute your database queries through this upon successful connection.
+	*/
 	public void connectToRedshift() {
 		Connection conn = null;
         Statement stmt = null;
@@ -188,7 +225,7 @@ public class RedshiftService {
 
 }
 
-//Commented code - Rough work
+/* ROUGH WORK - PLEASE IGNORE THIS PART */
 //redshift.authenticateRedshift();
 //redshift.createRedshift();
 //redshift.describeRedshiftClusters();
